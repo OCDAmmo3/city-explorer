@@ -8,9 +8,11 @@ app.use(cors());
 
 app.get('/location', (request, response) => {
     try{
-        superagent.get(`https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY`);
-        const location = new Location(request.query.location, geoData)
-        response.send(location);
+        superagent.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.data}&key=${process.env.GEOCODEAPI_KEY}`)
+        .then((geoData) => {
+            const location = new Location(request.query.data, geoData.body)
+            response.send(location);
+        });
     } catch(error){
         response.status(500).send('Sorry, something went wrong.')
     }
