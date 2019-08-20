@@ -23,8 +23,26 @@ function Location(query, geoData){
 }
 
 app.get('/weather', (request, response) => {
-    response.send('also works');
+    try {
+        const darkskyData = require('./darksky.json')
+        const weather = new Weather(darkskyData)
+        response.send(weather.weather);
+    } catch(error){
+        response.status(500).send('Sorry, this page is a broke.')
+    }
 })
+
+function Weather(darkskyData){
+    let days = [];
+    for(const day of darkskyData['daily']['data']) {
+        let date = new Date(day.time * 1000);
+        days.push({
+            'forecast': day.summary,
+            'time': date.toString().slice(0, 15)
+        })
+    this.weather = days;
+}}
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('server is listening');
